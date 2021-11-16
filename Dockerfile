@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0
+FROM mcr.microsoft.com/dotnet/sdk:6.0
 
 ENV PROVIDER=http://localhost:8545
 
@@ -13,4 +13,4 @@ RUN dotnet restore &&\
     dotnet build --configuration Release --no-restore &&\
     dotnet test --no-restore --verbosity normal
 
-CMD ["./bin/Release/net5.0/ethquery-indexer"]
+CMD ["./bin/Release/net6.0/ethquery-indexer"]
