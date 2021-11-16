@@ -29,3 +29,7 @@ run container on boot
 ```
 docker run -d -e PROVIDER="http://localhost:8545" --restart always --name ethquery-indexer luisnaldo7/ethquery-indexer:latest
 ```
+
+## Swagger Documentation
+
+Once the application is running you can open the [API documentation](http://localhost:5000/swagger).
