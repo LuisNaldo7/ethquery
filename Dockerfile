@@ -1,16 +1,35 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 
-ENV PROVIDER=http://localhost:8545
-
-# copy source files
-COPY ./ethquery-indexer/ /ethquery/ethquery-indexer/
-
-# set working dir
+## Set working dir
 WORKDIR /ethquery/ethquery-indexer/
 
-# build app for arm
+## copy app source
+COPY ./ethquery-indexer/ /ethquery/ethquery-indexer/
+
+## Build app
 RUN dotnet restore &&\
     dotnet build --configuration Release --no-restore &&\
     dotnet test --no-restore --verbosity normal
 
-CMD ["./bin/Release/net6.0/ethquery-indexer"]
+
+
+# Run stage
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS run
+
+## Declare env vars
+ENV PROVIDER=http://localhost:8545
+
+## Set working dir
+WORKDIR /ethquery/ethquery-indexer/
+
+## Operate as non-privileged user
+RUN useradd net
+RUN chown -R net:net /ethquery/ethquery-indexer/
+USER net
+
+## Copy app
+COPY --from=build /ethquery/ethquery-indexer/bin/Release/net6.0/ ./
+
+## Execute app
+CMD ["./ethquery-indexer"]
